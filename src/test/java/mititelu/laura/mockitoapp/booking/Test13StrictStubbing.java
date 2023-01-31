@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class Test13StrictStubbing {
 
@@ -32,7 +34,8 @@ class Test13StrictStubbing {
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, false);
-        //when(paymentServiceMock.pay(any(), anyDouble())).thenReturn("1"); //if prepaid false -> this is not needed -> unecessary stubbing
+        //when(paymentServiceMock.pay(any(), anyDouble())).thenReturn("1"); //if prepaid false -> this is not needed -> unnecessary stubbing
+        lenient().when(paymentServiceMock.pay(any(), anyDouble())).thenReturn("1"); //to keep the unnecessary stubbing with no error
 
         // when
         bookingService.makeBooking(bookingRequest);

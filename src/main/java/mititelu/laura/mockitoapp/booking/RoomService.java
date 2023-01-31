@@ -25,8 +25,9 @@ public class RoomService {
 				.map(room -> room.getId())
 				.orElseThrow(BusinessException::new);
 	}
-	
-	public List<Room> getAvailableRooms() {
+
+	//method was made final for test 16
+	public final List<Room> getAvailableRooms() {
 		return roomAvailability.entrySet().stream()
 				.filter(entry -> entry.getValue())
 				.map(entry -> entry.getKey())
