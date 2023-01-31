@@ -9,14 +9,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class Test11Annotations {
+class Test12Bdd {
 
     @InjectMocks
     private BookingService bookingService;
@@ -32,10 +31,24 @@ class Test11Annotations {
     @Captor
     private ArgumentCaptor<Double> doubleCaptor;
 
+    @Test
+    void should_CountAvailablePlaces_When_OneRoomAvailable(){
+        // given
+        given(this.roomServiceMock.getAvailableRooms())
+                .willReturn(Collections.singletonList(new Room( "Room 1", 5 )));
 
+        int expected = 5;
+
+        // when
+        int actual = bookingService.getAvailablePlaceCount();
+
+        // then
+        assertEquals(expected, actual);
+
+    }
 
     @Test
-    void should_PayCorrectPrice_When_InputOK(){
+    void should_InvokePayment_When_Prepaid(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, true);
@@ -44,36 +57,10 @@ class Test11Annotations {
         bookingService.makeBooking(bookingRequest);
 
         // then
-        verify(paymentServiceMock, times(1)).pay(eq(bookingRequest), doubleCaptor.capture());
+        then(paymentServiceMock).should(times(1)).pay(bookingRequest, 400.0);
+        verifyNoMoreInteractions(paymentServiceMock);
+   }
 
-        double capturedArgument = doubleCaptor.getValue() ;
 
-//        System.out.println("Captured argument " + capturedArgument);
-
-        assertEquals(400.0, capturedArgument);
-    }
-
-    @Test
-    void should_PayCorrectPrices_When_MultipleCalls(){
-        // given
-        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
-                LocalDate.of(2023,2,4), 2, true);
-
-        BookingRequest bookingRequest2 = new BookingRequest("1", LocalDate.of(2023, 1, 31),
-                LocalDate.of(2023,2,1), 2, true);
-
-        List<Double> expectedValues = Arrays.asList(400.0,100.0 );
-
-        // when
-        bookingService.makeBooking(bookingRequest);
-        bookingService.makeBooking(bookingRequest2);
-
-        // then
-        verify(paymentServiceMock, times(2)).pay(any(), doubleCaptor.capture());
-
-        List<Double> capturedArguments = doubleCaptor.getAllValues();
-
-        assertEquals(expectedValues, capturedArguments);
-    }
 
 }

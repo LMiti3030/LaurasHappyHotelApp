@@ -3,15 +3,14 @@ package mititelu.laura.mockitoapp.booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
-class Test03ReturningCustomValues {
+class Test04MultipleThenReturnCalls {
 
     private BookingService bookingService;
 
@@ -32,38 +31,28 @@ class Test03ReturningCustomValues {
     }
 
     @Test
-    void should_CountAvailablePlaces_When_OneRoomAvailable(){
+    void should_CountAvailablePlaces_When_CalledMultipleTimes(){
         // given
         when(this.roomServiceMock.getAvailableRooms())
-                .thenReturn(Collections.singletonList(new Room( "Room 1", 5 )));
+                .thenReturn(Collections.singletonList(new Room( "Room 1", 5 )))
+                .thenReturn(Collections.emptyList());
+        //first  time 5 places
+        //second time empty list
 
-        int expected = 5;
-
-        // when
-        int actual = bookingService.getAvailablePlaceCount();
-
-        // then
-        assertEquals(expected, actual);
-
-    }
-
-    @Test
-    void should_CountAvailablePlaces_When_MultipleRoomsAvailable(){
-        // given
-        List<Room> rooms = Arrays.asList(
-                new Room( "Room 1", 2 ),
-                new Room( "Room 2", 5 )
-                 );
-        when(this.roomServiceMock.getAvailableRooms())
-                .thenReturn(rooms);
-        int expected = 7;
+        int expectedFirstCall = 5;
+        int expectedSecondCall = 0;
 
         // when
-        int actual = bookingService.getAvailablePlaceCount();
+        int actualFirstCall = bookingService.getAvailablePlaceCount();
+        int actualSecondCall = bookingService.getAvailablePlaceCount();
 
         // then
-        assertEquals(expected, actual);
-
+        assertAll(
+                () -> assertEquals(expectedFirstCall, actualFirstCall),
+                () -> assertEquals(expectedSecondCall, actualSecondCall)
+        );
     }
+
+
 
 }

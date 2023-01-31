@@ -2,13 +2,15 @@ package mititelu.laura.mockitoapp.booking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-class Test01FirstMocks {
+class Test05ThrowingExceptions {
 
     private BookingService bookingService;
 
@@ -28,17 +30,19 @@ class Test01FirstMocks {
     }
 
     @Test
-    void should_CalculateCorrectPrice_When_CorrectInput(){
+    void should_ThrowException_When_NoRoomAvailable(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, false);
-        double expected = 4  * 2 * 50.0; //4 nights * 2 people * 50 usd base price
+
+        when(roomServiceMock.findAvailableRoomId(bookingRequest))
+                .thenThrow(BusinessException.class);
 
         // when
-        double actual = bookingService.calculatePrice(bookingRequest);
+        Executable executable = () -> bookingService.makeBooking(bookingRequest);
 
         // then
-        assertEquals(expected, actual);
+        assertThrows(BusinessException.class, executable);
 
     }
 

@@ -1,6 +1,8 @@
-package com.mockitotutorial.happyhotel.booking;
+package mititelu.laura.mockitoapp.booking;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class BookingDAO {
 

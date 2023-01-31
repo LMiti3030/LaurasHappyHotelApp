@@ -9,16 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class Test12Bdd {
+class Test13StrictStubbing {
 
     @InjectMocks
     private BookingService bookingService;
@@ -35,33 +28,17 @@ class Test12Bdd {
     private ArgumentCaptor<Double> doubleCaptor;
 
     @Test
-    void should_CountAvailablePlaces_When_OneRoomAvailable(){
-        // given
-        given(this.roomServiceMock.getAvailableRooms())
-                .willReturn(Collections.singletonList(new Room( "Room 1", 5 )));
-
-        int expected = 5;
-
-        // when
-        int actual = bookingService.getAvailablePlaceCount();
-
-        // then
-        assertEquals(expected, actual);
-
-    }
-
-    @Test
     void should_InvokePayment_When_Prepaid(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
-                LocalDate.of(2023,2,4), 2, true);
+                LocalDate.of(2023,2,4), 2, false);
+        //when(paymentServiceMock.pay(any(), anyDouble())).thenReturn("1"); //if prepaid false -> this is not needed -> unecessary stubbing
 
         // when
         bookingService.makeBooking(bookingRequest);
 
         // then
-        then(paymentServiceMock).should(times(1)).pay(bookingRequest, 400.0);
-        verifyNoMoreInteractions(paymentServiceMock);
+        //no exception is thrown
    }
 
 

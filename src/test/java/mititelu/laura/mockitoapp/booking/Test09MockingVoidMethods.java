@@ -6,11 +6,10 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class Test05ThrowingExceptions {
+class Test09MockingVoidMethods {
 
     private BookingService bookingService;
 
@@ -30,19 +29,34 @@ class Test05ThrowingExceptions {
     }
 
     @Test
-    void should_ThrowException_When_NoRoomAvailable(){
+    void should_ThrowException_When_MailNotReady(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, false);
 
-        when(roomServiceMock.findAvailableRoomId(bookingRequest))
-                .thenThrow(BusinessException.class);
+        doThrow(BusinessException.class).when(mailSenderMock).sendBookingConfirmation(any());
 
         // when
         Executable executable = () -> bookingService.makeBooking(bookingRequest);
 
         // then
         assertThrows(BusinessException.class, executable);
+
+    }
+
+    @Test
+    void should_NotThrowException_When_MailNotReady(){
+        // given
+        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
+                LocalDate.of(2023,2,4), 2, false);
+
+        doNothing().when(mailSenderMock).sendBookingConfirmation(any());
+
+        // when
+
+
+        // then
+        //no exception is thrown
 
     }
 

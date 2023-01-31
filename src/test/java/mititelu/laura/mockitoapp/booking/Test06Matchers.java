@@ -6,11 +6,11 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class Test05ThrowingExceptions {
+
+class Test06Matchers {
 
     private BookingService bookingService;
 
@@ -30,13 +30,12 @@ class Test05ThrowingExceptions {
     }
 
     @Test
-    void should_ThrowException_When_NoRoomAvailable(){
+    void should_NotCompleteBooking_When_PriceTooHigh(){
         // given
-        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
-                LocalDate.of(2023,2,4), 2, false);
+        BookingRequest bookingRequest = new BookingRequest("2", LocalDate.of(2023, 1, 31),
+                LocalDate.of(2023,2,4), 2, true);
 
-        when(roomServiceMock.findAvailableRoomId(bookingRequest))
-                .thenThrow(BusinessException.class);
+        when(this.paymentServiceMock.pay(any(), anyDouble())).thenThrow(BusinessException.class);
 
         // when
         Executable executable = () -> bookingService.makeBooking(bookingRequest);

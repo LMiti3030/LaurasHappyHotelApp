@@ -1,6 +1,8 @@
-package com.mockitotutorial.happyhotel.booking;
+package mititelu.laura.mockitoapp.booking;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RoomService {

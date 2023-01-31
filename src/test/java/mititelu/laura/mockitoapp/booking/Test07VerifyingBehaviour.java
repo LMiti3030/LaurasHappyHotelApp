@@ -5,10 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class Test01FirstMocks {
+class Test07VerifyingBehaviour {
 
     private BookingService bookingService;
 
@@ -28,17 +27,33 @@ class Test01FirstMocks {
     }
 
     @Test
-    void should_CalculateCorrectPrice_When_CorrectInput(){
+    void should_InvokePayment_When_Prepaid(){
+        // given
+        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
+                LocalDate.of(2023,2,4), 2, true);
+
+        // when
+        bookingService.makeBooking(bookingRequest);
+
+        // then
+        verify(paymentServiceMock, times(1)).pay(bookingRequest, 400.0);
+        verifyNoMoreInteractions(paymentServiceMock);
+
+        //verify(paymentServiceMock).pay(bookingRequest, 500.0); //fails because price calculated for the room is 400
+    }
+
+
+    @Test
+    void should_NotInvokePayment_When_NotPrepaid(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, false);
-        double expected = 4  * 2 * 50.0; //4 nights * 2 people * 50 usd base price
-
         // when
-        double actual = bookingService.calculatePrice(bookingRequest);
+        bookingService.makeBooking(bookingRequest);
 
         // then
-        assertEquals(expected, actual);
+        verify(paymentServiceMock, never()).pay(any(), anyDouble());
+        //verifyNoInteractions(paymentServiceMock); //also works in this case
 
     }
 

@@ -1,43 +1,38 @@
 package mititelu.laura.mockitoapp.booking;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class Test10ArgumentCaptors {
+@ExtendWith(MockitoExtension.class)
+class Test11Annotations {
 
+    @InjectMocks
     private BookingService bookingService;
 
+    @Mock
     private PaymentService paymentServiceMock;
+    @Mock
     private RoomService roomServiceMock;
+    @Mock
     private BookingDAO bookingDAOMock;
+    @Mock
     private MailSender mailSenderMock;
+    @Captor
     private ArgumentCaptor<Double> doubleCaptor;
-    private ArgumentCaptor<BookingRequest> bookingRequestCaptor;
 
 
-    @BeforeEach
-    void setUp(){
-        this.paymentServiceMock = mock(PaymentService.class);
-        this.roomServiceMock = mock(RoomService.class);
-        this.bookingDAOMock = mock(BookingDAO.class);
-        this.mailSenderMock = mock(MailSender.class);
-
-        this.bookingService = new BookingService(paymentServiceMock, roomServiceMock, bookingDAOMock, mailSenderMock);
-
-        this.doubleCaptor = ArgumentCaptor.forClass(Double.class);
-        this.bookingRequestCaptor = ArgumentCaptor.forClass(BookingRequest.class);
-    }
 
     @Test
     void should_PayCorrectPrice_When_InputOK(){

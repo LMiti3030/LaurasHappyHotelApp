@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
 
-class Test07VerifyingBehaviour {
+class Test08Spies {
 
     private BookingService bookingService;
 
@@ -22,41 +20,45 @@ class Test07VerifyingBehaviour {
     void setUp(){
         this.paymentServiceMock = mock(PaymentService.class);
         this.roomServiceMock = mock(RoomService.class);
-        this.bookingDAOMock = mock(BookingDAO.class);
+        this.bookingDAOMock = spy(BookingDAO.class);
         this.mailSenderMock = mock(MailSender.class);
 
         this.bookingService = new BookingService(paymentServiceMock, roomServiceMock, bookingDAOMock, mailSenderMock);
     }
 
     @Test
-    void should_InvokePayment_When_Prepaid(){
+    void should_MakeBooking_When_InputOK(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
                 LocalDate.of(2023,2,4), 2, true);
 
         // when
-        bookingService.makeBooking(bookingRequest);
+        String bookingId = bookingService.makeBooking(bookingRequest);
 
         // then
-        verify(paymentServiceMock, times(1)).pay(bookingRequest, 400.0);
-        verifyNoMoreInteractions(paymentServiceMock);
+        verify(bookingDAOMock).save(bookingRequest);
+        System.out.println("Booking id= " + bookingId);
 
-        //verify(paymentServiceMock).pay(bookingRequest, 500.0); //fails because price calculated for the room is 400
     }
-
 
     @Test
-    void should_NotInvokePayment_When_NotPrepaid(){
+    void should_CancelBooking_When_InputOK(){
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2023, 1, 31),
-                LocalDate.of(2023,2,4), 2, false);
+                LocalDate.of(2023,2,4), 2, true);
+        bookingRequest.setRoomId("1.3");
+        String bookingId = "1";
+
+        doReturn(bookingRequest).when(bookingDAOMock).get(bookingId);
+
         // when
-        bookingService.makeBooking(bookingRequest);
+        bookingService.cancelBooking(bookingId);
 
         // then
-        verify(paymentServiceMock, never()).pay(any(), anyDouble());
-        //verifyNoInteractions(paymentServiceMock);
+
 
     }
+
+
 
 }

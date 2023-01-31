@@ -1,4 +1,4 @@
-package com.mockitotutorial.happyhotel.booking;
+package mititelu.laura.mockitoapp.booking;
 
 import java.time.temporal.ChronoUnit;
 
